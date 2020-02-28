@@ -40,7 +40,30 @@ func (c *Counter) GetKeys() int {
 	return int(result.Total)
 }
 
-func (c *Counter) increment() {
+func (c *Counter) GetClicks() int {
+	var client Client
+	c.db.First(&client)
+
+	now := time.Now()
+
+	type Result struct {
+		Total int64
+	}
+	var result Result
+	c.db.Table("stats").
+		Select("sum(clicks) as total").
+		Where(Stats{
+			ClientUUID: client.UUID,
+			Year:       now.Year(),
+			YearDay:    now.YearDay(),
+		}).
+		Group("year, year_day, hour").
+		Scan(&result)
+
+	return int(result.Total)
+}
+
+func (c *Counter) incrementKeys() {
 	var client Client
 	c.db.First(&client)
 
@@ -57,6 +80,23 @@ func (c *Counter) increment() {
 	c.db.Model(&stats).Update("keys", stats.Keys+1)
 }
 
+func (c *Counter) incrementClicks() {
+	var client Client
+	c.db.First(&client)
+
+	now := time.Now()
+
+	var stats Stats
+	c.db.Where(Stats{
+		ClientUUID: client.UUID,
+		Year:       now.Year(),
+		YearDay:    now.YearDay(),
+		Hour:       now.Hour(),
+	}).FirstOrCreate(&stats)
+
+	c.db.Model(&stats).Update("clicks", stats.Clicks+1)
+}
+
 func (c *Counter) Count() {
 	go func() {
 		evChan := hook.Start()
@@ -64,7 +104,10 @@ func (c *Counter) Count() {
 
 		for ev := range evChan {
 			if ev.Kind == hook.KeyUp {
-				c.increment()
+				c.incrementKeys()
+			}
+			if ev.Kind == hook.MouseUp {
+				c.incrementClicks()
 			}
 		}
 	}()

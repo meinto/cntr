@@ -22,6 +22,8 @@ func (s *Systemtray) Run() {
 
 func (s *Systemtray) onReady() {
 	systray.SetTitle("Key count: 0")
+	clicks := systray.AddMenuItem("Clicks: ", "Clicks")
+	systray.AddSeparator()
 	quit := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
 		<-quit.ClickedCh
@@ -29,7 +31,8 @@ func (s *Systemtray) onReady() {
 	}()
 
 	for {
-		systray.SetTitle("Key count: " + strconv.FormatInt(int64(s.counter.GetKeys()), 10))
+		systray.SetTitle("Keys: " + strconv.FormatInt(int64(s.counter.GetKeys()), 10))
+		clicks.SetTitle("Clicks: " + strconv.FormatInt(int64(s.counter.GetClicks()), 10))
 		time.Sleep(time.Second)
 	}
 }
