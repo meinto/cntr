@@ -22,7 +22,12 @@ func (s *Systemtray) Run() {
 
 func (s *Systemtray) onReady() {
 	systray.SetTitle("Key count: 0")
-	clicks := systray.AddMenuItem("Clicks: ", "Clicks")
+	systray.AddSeparator()
+	keysToday := systray.AddMenuItem("Key Today: ", "Key Today")
+	clicksToday := systray.AddMenuItem("Clicks Today: ", "Clicks Today")
+	systray.AddSeparator()
+	keysYesterday := systray.AddMenuItem("Key Yesterday: ", "Key Yesterday")
+	clicksYesterday := systray.AddMenuItem("Clicks Yesterday: ", "Clicks Yesterday")
 	systray.AddSeparator()
 	quit := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
@@ -31,8 +36,11 @@ func (s *Systemtray) onReady() {
 	}()
 
 	for {
-		systray.SetTitle("Keys: " + strconv.FormatInt(int64(s.counter.GetKeys()), 10))
-		clicks.SetTitle("Clicks: " + strconv.FormatInt(int64(s.counter.GetClicks()), 10))
+		systray.SetTitle("Keys: " + strconv.FormatInt(int64(s.counter.GetKeys(0)), 10))
+		keysToday.SetTitle("Keys Today: " + strconv.FormatInt(int64(s.counter.GetKeys(0)), 10))
+		clicksToday.SetTitle("Clicks Today: " + strconv.FormatInt(int64(s.counter.GetClicks(0)), 10))
+		keysYesterday.SetTitle("Keys Yesterday: " + strconv.FormatInt(int64(s.counter.GetKeys(1)), 10))
+		clicksYesterday.SetTitle("Clicks Yesterday: " + strconv.FormatInt(int64(s.counter.GetClicks(1)), 10))
 		time.Sleep(time.Second)
 	}
 }

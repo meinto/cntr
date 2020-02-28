@@ -17,11 +17,15 @@ func NewCounter(db *gorm.DB) *Counter {
 	return &Counter{db, 0, time.Now()}
 }
 
-func (c *Counter) GetKeys() int {
+func (c *Counter) GetKeys(daysPast int) int {
 	var client Client
 	c.db.First(&client)
 
 	now := time.Now()
+	yearday := now.YearDay() - daysPast
+	if yearday < 1 {
+		yearday = 1
+	}
 
 	type Result struct {
 		Total int64
@@ -32,7 +36,7 @@ func (c *Counter) GetKeys() int {
 		Where(Stats{
 			ClientUUID: client.UUID,
 			Year:       now.Year(),
-			YearDay:    now.YearDay(),
+			YearDay:    yearday,
 		}).
 		Group("year, year_day, hour").
 		Scan(&result)
@@ -40,11 +44,15 @@ func (c *Counter) GetKeys() int {
 	return int(result.Total)
 }
 
-func (c *Counter) GetClicks() int {
+func (c *Counter) GetClicks(daysPast int) int {
 	var client Client
 	c.db.First(&client)
 
 	now := time.Now()
+	yearday := now.YearDay() - daysPast
+	if yearday < 1 {
+		yearday = 1
+	}
 
 	type Result struct {
 		Total int64
@@ -55,7 +63,7 @@ func (c *Counter) GetClicks() int {
 		Where(Stats{
 			ClientUUID: client.UUID,
 			Year:       now.Year(),
-			YearDay:    now.YearDay(),
+			YearDay:    yearday,
 		}).
 		Group("year, year_day, hour").
 		Scan(&result)
