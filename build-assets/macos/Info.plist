@@ -2,18 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleDisplayName</key>
-  <string>cntr</string>
+  <key>CFBundleDevelopmentRegion</key>
+	<string>Germany</string>
+	<key>CFBundleExecutable</key>
+	<string>cntr</string>
+	<key>CFBundleIdentifier</key>
+	<string>meinto.cntr</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>cntr</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 
-  <key>CFBundleVersion</key>
-  <string>1.1.0</string>
-
-  <!-- having a blurry icon and text -->
   <key>NSHighResolutionCapable</key>
-  <string>True</string>
-
-  <!-- avoid showing the app on the Dock -->
+  <true/>
   <key>LSUIElement</key>
-  <string>1</string>
+  <true/>
+
+  <key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2020 Tobias Meinhardt. All rights reserved.</string>
 </dict>
 </plist>
