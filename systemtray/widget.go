@@ -1,4 +1,4 @@
-package statusbar
+package systemtray
 
 import (
 	"strconv"

@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/meinto/cntr/counter"
-	"github.com/meinto/cntr/statusbar"
+	"github.com/meinto/cntr/systemtray"
 )
 
 func main() {
 	go counter.Count()
-	statusbar.Run()
+	systemtray.Run()
 }
