@@ -3,29 +3,48 @@ package counter
 import (
 	"time"
 
+	"github.com/jinzhu/gorm"
 	hook "github.com/robotn/gohook"
 )
 
 type Counter struct {
+	db   *gorm.DB
 	keys int
 	time time.Time
 }
 
-func NewCounter() *Counter {
-	return &Counter{0, time.Now()}
+func NewCounter(db *gorm.DB) *Counter {
+	return &Counter{db, 0, time.Now()}
 }
 
 func (c *Counter) GetKeys() int {
-	return c.keys
+	var client Client
+	c.db.First(&client)
+	var stats Stats
+	c.db.Where(Stats{
+		ClientUUID: client.UUID,
+		Year:       time.Now().Year(),
+		YearDay:    time.Now().YearDay(),
+		Hour:       time.Now().Hour(),
+	}).FirstOrCreate(&stats)
+	return stats.Keys
 }
 
 func (c *Counter) increment() {
-	c.keys++
-}
+	var client Client
+	c.db.First(&client)
 
-func (c *Counter) reset() {
-	c.keys = 0
-	c.time = time.Now()
+	now := time.Now()
+
+	var stats Stats
+	c.db.Where(Stats{
+		ClientUUID: client.UUID,
+		Year:       now.Year(),
+		YearDay:    now.YearDay(),
+		Hour:       now.Hour(),
+	}).FirstOrCreate(&stats)
+
+	c.db.Model(&stats).Update("keys", stats.Keys+1)
 }
 
 func (c *Counter) Count() {
@@ -33,23 +52,10 @@ func (c *Counter) Count() {
 		evChan := hook.Start()
 		defer hook.End()
 
-		c.runResetCounterInterval()
-
 		for ev := range evChan {
 			if ev.Kind == hook.KeyUp {
 				c.increment()
 			}
-		}
-	}()
-}
-
-func (c *Counter) runResetCounterInterval() {
-	go func() {
-		for {
-			if time.Now().Day() != c.time.Day() {
-				c.reset()
-			}
-			time.Sleep(2 * time.Second)
 		}
 	}()
 }
