@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
-	go counter.Count()
-	systemtray.Run()
+	c := counter.NewCounter()
+	c.Count()
+	s := systemtray.NewSystemtrayWidget(c)
+	s.Run()
 }

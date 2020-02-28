@@ -8,11 +8,19 @@ import (
 	"github.com/meinto/cntr/counter"
 )
 
-func Run() {
-	systray.Run(onReady, onExit)
+type Systemtray struct {
+	counter *counter.Counter
 }
 
-func onReady() {
+func NewSystemtrayWidget(c *counter.Counter) *Systemtray {
+	return &Systemtray{c}
+}
+
+func (s *Systemtray) Run() {
+	systray.Run(s.onReady, s.onExit)
+}
+
+func (s *Systemtray) onReady() {
 	systray.SetTitle("Key count: 0")
 	quit := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
@@ -21,11 +29,11 @@ func onReady() {
 	}()
 
 	for {
-		systray.SetTitle("Key count: " + strconv.FormatInt(int64(counter.ActiveCounter.GetKeys()), 10))
+		systray.SetTitle("Key count: " + strconv.FormatInt(int64(s.counter.GetKeys()), 10))
 		time.Sleep(time.Second)
 	}
 }
 
-func onExit() {
+func (s *Systemtray) onExit() {
 	// clean up here
 }
