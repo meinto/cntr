@@ -20,14 +20,24 @@ func NewCounter(db *gorm.DB) *Counter {
 func (c *Counter) GetKeys() int {
 	var client Client
 	c.db.First(&client)
-	var stats Stats
-	c.db.Where(Stats{
-		ClientUUID: client.UUID,
-		Year:       time.Now().Year(),
-		YearDay:    time.Now().YearDay(),
-		Hour:       time.Now().Hour(),
-	}).FirstOrCreate(&stats)
-	return stats.Keys
+
+	now := time.Now()
+
+	type Result struct {
+		Total int64
+	}
+	var result Result
+	c.db.Table("stats").
+		Select("sum(keys) as total").
+		Where(Stats{
+			ClientUUID: client.UUID,
+			Year:       now.Year(),
+			YearDay:    now.YearDay(),
+		}).
+		Group("year, year_day, hour").
+		Scan(&result)
+
+	return int(result.Total)
 }
 
 func (c *Counter) increment() {
