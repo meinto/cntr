@@ -38,7 +38,7 @@ func (c *Counter) GetKeys(daysPast int) int {
 			Year:       now.Year(),
 			YearDay:    yearday,
 		}).
-		Group("year, year_day, hour").
+		Group("year, year_day").
 		Scan(&result)
 
 	return int(result.Total)

@@ -30,7 +30,10 @@ func Automigrate(db *gorm.DB) {
 
 func Init(db *gorm.DB) {
 	var client counter.Client
-	db.FirstOrInit(&client, counter.Client{
-		UUID: uuid.Must(uuid.NewV4()),
-	})
+	db.First(&client)
+	if client.ID == 0 {
+		db.Create(counter.Client{
+			UUID: uuid.Must(uuid.NewV4()),
+		})
+	}
 }
