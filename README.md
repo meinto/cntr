@@ -1,9 +1,11 @@
 # Cntr
 
-This is a simple key counter widget for your system tray. It's wip.
+This is a simple key counter widget for your system tray. It could be an open source alternative to your WhatPulse client. It's wip.
+
+**supported platforms**: `macos`  
+**support in porgress**: `windows`, `linux`  
 
 ![widget](./widget.png)
-
 
 ## Build
 
@@ -18,4 +20,4 @@ open ./dist
 
 ## Contribution
 
-Contributions are very welcome. :)
+Contributions are welcome. :)
