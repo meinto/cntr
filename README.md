@@ -6,6 +6,7 @@ This is a simple key counter widget for your system tray. It could be an open so
 **support in porgress**: `windows`, `linux`  
 
 ![widget](./widget.png)
+![app window](./app-window.png)
 
 ## Build
 
