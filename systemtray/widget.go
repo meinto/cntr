@@ -39,7 +39,7 @@ func (s *Systemtray) onReady() {
 			case <-quit.ClickedCh:
 				systray.Quit()
 			case <-openAppWindow.ClickedCh:
-				systray.ShowAppWindow("http://localhost:4000")
+				systray.ShowAppWindow("http://localhost:5564")
 			}
 		}
 	}()

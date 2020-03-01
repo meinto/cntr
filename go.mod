@@ -12,6 +12,7 @@ require (
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/jinzhu/gorm v1.9.12
 	github.com/robotn/gohook v0.0.0-20200224154940-caaa106d8037
+	github.com/rs/cors v1.7.0
 	github.com/sirupsen/logrus v1.4.2 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 )

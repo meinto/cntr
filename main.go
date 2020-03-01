@@ -19,10 +19,10 @@ func main() {
 	db.Automigrate(gormdb)
 	db.Init(gormdb)
 
-	s := server.NewServer(gormdb)
-	s.Start()
 	c := counter.NewCounter(gormdb)
 	c.Count()
+	s := server.NewServer(gormdb, c)
+	s.Start()
 	t := systemtray.NewSystemtrayWidget(c)
 	t.Run()
 }
