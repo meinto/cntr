@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-export const useDataFetch = (url: string): [] | null => {
+export const useDataFetch = (url: string): [[] | null, () => Promise<void>] => {
   const [data, setData] = useState(null);
-  useEffect(() => {
-    const loadData = async (url: string) => {
-      const response = await fetch(url);
-      const json = await response.json();
+  const loadData = async () => {
+    const response = await fetch(url);
+    const json = await response.json();
+    if (JSON.stringify(json) !== JSON.stringify(data)) {
       setData(json);
-    };
-    loadData(url);
-  }, [url]);
-  return data;
+    }
+  };
+  return [data, loadData];
 };
