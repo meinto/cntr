@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gobuffalo/packr/v2"
 	"github.com/jinzhu/gorm"
 	"github.com/meinto/cntr/counter"
 	"github.com/rs/cors"
@@ -24,6 +25,7 @@ func NewServer(db *gorm.DB, c *counter.Counter) *Server {
 
 func (s *Server) Start() {
 	go func() {
+		box := packr.New("App", "../app/build")
 		const defaultPort = "5564"
 
 		port := os.Getenv("PORT")
@@ -32,9 +34,7 @@ func (s *Server) Start() {
 		}
 
 		mux := http.NewServeMux()
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("api for cntr app"))
-		})
+		mux.Handle("/", http.FileServer(box))
 		mux.HandleFunc("/getKeys", func(w http.ResponseWriter, r *http.Request) {
 			startYear, _ := strconv.ParseInt(r.URL.Query().Get("startYear"), 10, 64)
 			startMonth, _ := strconv.ParseInt(r.URL.Query().Get("startMonth"), 10, 64)
@@ -70,7 +70,7 @@ func (s *Server) Start() {
 		log.Printf("connect to http://localhost:%s/", port)
 
 		c := cors.New(cors.Options{
-			AllowedOrigins:   []string{"http://localhost:3000"},
+			AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5564"},
 			AllowCredentials: true,
 			// Enable Debugging for testing, consider disabling in production
 			Debug: true,

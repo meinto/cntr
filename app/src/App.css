@@ -6,6 +6,7 @@
   height: 100vh;
   background-color: #282c34;
   color: white;
+  user-select: none;
 }
 
 .App-header {

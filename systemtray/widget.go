@@ -17,7 +17,7 @@ func NewSystemtrayWidget(c *counter.Counter) *Systemtray {
 }
 
 func (s *Systemtray) Run() {
-	systray.RunWithAppWindow("cntr", 1024, 768, s.onReady, s.onExit)
+	systray.RunWithAppWindow("cntr", 556, 422, s.onReady, s.onExit)
 }
 
 func (s *Systemtray) onReady() {
