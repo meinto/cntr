@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"log"
@@ -8,7 +8,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/meinto/cntr/counter"
 )
 
 func NewDatabase() (*gorm.DB, error) {
@@ -24,15 +23,15 @@ func NewDatabase() (*gorm.DB, error) {
 }
 
 func Automigrate(db *gorm.DB) {
-	db.AutoMigrate(&counter.Client{})
-	db.AutoMigrate(&counter.Stats{})
+	db.AutoMigrate(&Client{})
+	db.AutoMigrate(&Stats{})
 }
 
 func Init(db *gorm.DB) {
-	var client counter.Client
+	var client Client
 	db.First(&client)
 	if client.ID == 0 {
-		db.Create(counter.Client{
+		db.Create(Client{
 			UUID: uuid.Must(uuid.NewV4()),
 		})
 	}

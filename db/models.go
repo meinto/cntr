@@ -1,4 +1,4 @@
-package counter
+package db
 
 import (
 	"github.com/gofrs/uuid"

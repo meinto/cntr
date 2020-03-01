@@ -4,21 +4,21 @@ import (
 	"log"
 
 	"github.com/meinto/cntr/counter"
-	"github.com/meinto/cntr/database"
+	"github.com/meinto/cntr/db"
 	"github.com/meinto/cntr/systemtray"
 )
 
 func main() {
-	db, err := database.NewDatabase()
+	gormdb, err := db.NewDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer gormdb.Close()
 
-	database.Automigrate(db)
-	database.Init(db)
+	db.Automigrate(gormdb)
+	db.Init(gormdb)
 
-	c := counter.NewCounter(db)
+	c := counter.NewCounter(gormdb)
 	c.Count()
 	s := systemtray.NewSystemtrayWidget(c)
 	s.Run()

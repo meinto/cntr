@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/meinto/cntr/db"
 	hook "github.com/robotn/gohook"
 )
 
@@ -18,7 +19,7 @@ func NewCounter(db *gorm.DB) *Counter {
 }
 
 func (c *Counter) GetKeys(daysPast int) int {
-	var client Client
+	var client db.Client
 	c.db.First(&client)
 
 	now := time.Now()
@@ -33,7 +34,7 @@ func (c *Counter) GetKeys(daysPast int) int {
 	var result Result
 	c.db.Table("stats").
 		Select("sum(keys) as total").
-		Where(Stats{
+		Where(db.Stats{
 			ClientUUID: client.UUID,
 			Year:       now.Year(),
 			YearDay:    yearday,
@@ -45,7 +46,7 @@ func (c *Counter) GetKeys(daysPast int) int {
 }
 
 func (c *Counter) GetClicks(daysPast int) int {
-	var client Client
+	var client db.Client
 	c.db.First(&client)
 
 	now := time.Now()
@@ -60,7 +61,7 @@ func (c *Counter) GetClicks(daysPast int) int {
 	var result Result
 	c.db.Table("stats").
 		Select("sum(clicks) as total").
-		Where(Stats{
+		Where(db.Stats{
 			ClientUUID: client.UUID,
 			Year:       now.Year(),
 			YearDay:    yearday,
@@ -72,13 +73,13 @@ func (c *Counter) GetClicks(daysPast int) int {
 }
 
 func (c *Counter) incrementKeys() {
-	var client Client
+	var client db.Client
 	c.db.First(&client)
 
 	now := time.Now()
 
-	var stats Stats
-	c.db.Where(Stats{
+	var stats db.Stats
+	c.db.Where(db.Stats{
 		ClientUUID: client.UUID,
 		Year:       now.Year(),
 		YearDay:    now.YearDay(),
@@ -89,13 +90,13 @@ func (c *Counter) incrementKeys() {
 }
 
 func (c *Counter) incrementClicks() {
-	var client Client
+	var client db.Client
 	c.db.First(&client)
 
 	now := time.Now()
 
-	var stats Stats
-	c.db.Where(Stats{
+	var stats db.Stats
+	c.db.Where(db.Stats{
 		ClientUUID: client.UUID,
 		Year:       now.Year(),
 		YearDay:    now.YearDay(),
