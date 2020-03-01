@@ -17,7 +17,7 @@ func NewSystemtrayWidget(c *counter.Counter) *Systemtray {
 }
 
 func (s *Systemtray) Run() {
-	systray.Run(s.onReady, s.onExit)
+	systray.RunWithAppWindow("cntr", 1024, 768, s.onReady, s.onExit)
 }
 
 func (s *Systemtray) onReady() {
@@ -29,10 +29,19 @@ func (s *Systemtray) onReady() {
 	keysYesterday := systray.AddMenuItem("Key Yesterday: ", "Key Yesterday")
 	clicksYesterday := systray.AddMenuItem("Clicks Yesterday: ", "Clicks Yesterday")
 	systray.AddSeparator()
+	openAppWindow := systray.AddMenuItem("Open App", "Open App Window")
+	systray.AddSeparator()
 	quit := systray.AddMenuItem("Quit", "Quit the whole app")
+
 	go func() {
-		<-quit.ClickedCh
-		systray.Quit()
+		for {
+			select {
+			case <-quit.ClickedCh:
+				systray.Quit()
+			case <-openAppWindow.ClickedCh:
+				systray.ShowAppWindow("http://localhost:4000")
+			}
+		}
 	}()
 
 	for {

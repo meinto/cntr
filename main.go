@@ -5,6 +5,7 @@ import (
 
 	"github.com/meinto/cntr/counter"
 	"github.com/meinto/cntr/db"
+	"github.com/meinto/cntr/server"
 	"github.com/meinto/cntr/systemtray"
 )
 
@@ -18,8 +19,10 @@ func main() {
 	db.Automigrate(gormdb)
 	db.Init(gormdb)
 
+	s := server.NewServer(gormdb)
+	s.Start()
 	c := counter.NewCounter(gormdb)
 	c.Count()
-	s := systemtray.NewSystemtrayWidget(c)
-	s.Run()
+	t := systemtray.NewSystemtrayWidget(c)
+	t.Run()
 }
