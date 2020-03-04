@@ -57,7 +57,7 @@ func (s *Server) Start() {
 			}
 			var response []Tuple
 			date := startDate
-			for i := 0; i < 11; i++ {
+			for i := 0; i < 10; i++ {
 				duration := 24 * time.Hour
 				date = date.Add(duration)
 				keys := s.counter.GetKeys(date.Year(), date.YearDay())
