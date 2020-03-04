@@ -48,7 +48,7 @@ func (s *Server) Start() {
 			)
 
 			// tmp
-			startDate = startDate.Add(-1 * 240 * time.Hour)
+			startDate = time.Now().Add(-1 * 240 * time.Hour)
 
 			type Tuple struct {
 				Keys   int    `json:"keys,omitempty"`
