@@ -11,8 +11,8 @@ function App() {
   }, 1000);
   const chartData = data && data.map<any>((tuple: any) => ({
     name: tuple.date,
-    keys: tuple.keys,
-    clicks: tuple.clicks,
+    keys: tuple.keys || 0,
+    clicks: tuple.clicks || 0,
   })) || [];
   return (
     <div className="App">

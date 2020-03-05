@@ -73,7 +73,7 @@ func (s *Server) Start() {
 			AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5564"},
 			AllowCredentials: true,
 			// Enable Debugging for testing, consider disabling in production
-			Debug: true,
+			Debug: false,
 		})
 		handler := c.Handler(mux)
 		log.Fatal(http.ListenAndServe(":"+port, handler))
