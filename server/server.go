@@ -47,8 +47,16 @@ func (s *Server) Start() {
 				time.Now().Location(),
 			)
 
-			// tmp
-			startDate = time.Now().Add(-1 * 240 * time.Hour)
+			endYear, _ := strconv.ParseInt(r.URL.Query().Get("endYear"), 10, 64)
+			endMonth, _ := strconv.ParseInt(r.URL.Query().Get("endMonth"), 10, 64)
+			endDay, _ := strconv.ParseInt(r.URL.Query().Get("endDay"), 10, 64)
+			endDate := time.Date(
+				int(endYear),
+				time.Month(endMonth),
+				int(endDay),
+				0, 0, 0, 0,
+				time.Now().Location(),
+			).Add(24 * time.Hour)
 
 			type Tuple struct {
 				Keys   int    `json:"keys,omitempty"`
@@ -57,12 +65,11 @@ func (s *Server) Start() {
 			}
 			var response []Tuple
 			date := startDate
-			for i := 0; i < 10; i++ {
-				duration := 24 * time.Hour
-				date = date.Add(duration)
-				keys := s.counter.GetKeys(date.Year(), date.YearDay())
-				clicks := s.counter.GetClicks(date.Year(), date.YearDay())
+			for date.Before(endDate) {
+				keys := s.counter.GetKeys(date, date.Add(24*time.Hour))
+				clicks := s.counter.GetClicks(date, date.Add(24*time.Hour))
 				response = append(response, Tuple{keys, clicks, date.Format("02.01.2006")})
+				date = date.Add(24 * time.Hour)
 			}
 			json.NewEncoder(w).Encode(response)
 		})

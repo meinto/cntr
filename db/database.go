@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/jinzhu/gorm"
@@ -25,6 +26,25 @@ func NewDatabase() (*gorm.DB, error) {
 func Automigrate(db *gorm.DB) {
 	db.AutoMigrate(&Client{})
 	db.AutoMigrate(&Stats{})
+
+	var client Client
+	db.First(&client)
+
+	var stats []Stats
+	db.Where(Stats{
+		ClientUUID: client.UUID,
+		Timeslot:   nil,
+	}).Find(&stats)
+
+	for _, s := range stats {
+		current := time.Now()
+		for s.Year != current.Year() || s.YearDay != current.YearDay() {
+			current = current.Add(-1 * 24 * time.Hour)
+		}
+
+		timeslot := time.Date(s.Year, current.Month(), current.Day(), s.Hour, 0, 0, 0, current.Location())
+		db.Model(&s).Update("timeslot", timeslot)
+	}
 }
 
 func Init(db *gorm.DB) {

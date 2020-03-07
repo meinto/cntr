@@ -1,13 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
+import React, { useState } from 'react';
+import { DateRangePicker, isInclusivelyBeforeDay } from 'react-dates';
+import moment from 'moment'
 import './App.css';
 import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Area, Tooltip, AreaChart } from 'recharts';
 import useInterval from '@use-it/interval';
 import { useDataFetch } from './useDataFetch'
 
 function App() {
-  const [data, loadData] = useDataFetch('http://localhost:5564/getKeys?startYear=2020&startMonth=2&startDay=29')
+  const [data, loadData] = useDataFetch()
+  const [startDate, setStartDate] = useState(moment().subtract(10, 'day'))
+  const [endDate, setEndDate] = useState(moment())
+  const [focusedInput, setFocusedInput] = useState<'startDate' | 'endDate' | null>(null)
   useInterval(() => {
-    loadData();
+    const params = new URLSearchParams()
+    params.append('startYear', startDate.year().toString())
+    params.append('startMonth', (startDate.month() + 1).toString())
+    params.append('startDay', startDate.date().toString())
+    params.append('endYear', endDate.year().toString())
+    params.append('endMonth', (endDate.month() + 1).toString())
+    params.append('endDay', endDate.date().toString())
+    loadData('http://localhost:5564/getKeys?'+params.toString());
   }, 1000);
   const chartData = data && data.map<any>((tuple: any) => ({
     name: tuple.date,
@@ -17,7 +31,22 @@ function App() {
   return (
     <div className="App">
       <h1 style={{marginBottom: 0}}>Statistics</h1>
-      <strong>(last 10 days)</strong>
+      <DateRangePicker
+        noBorder
+        hideKeyboardShortcutsPanel
+        startDate={startDate} 
+        startDateId="start-date" 
+        endDate={endDate} 
+        endDateId="end-date" 
+        onDatesChange={({ startDate, endDate }) => {
+          if (startDate) setStartDate(startDate)
+          if (endDate) setEndDate(endDate)
+        }} 
+        focusedInput={focusedInput} 
+        onFocusChange={focusedInput => setFocusedInput(focusedInput)} 
+        isOutsideRange={day => !isInclusivelyBeforeDay(day, moment())}
+        displayFormat={() => "DD.MM.YYYY"}
+      />
       <br />
       <ResponsiveContainer aspect={2.5}>
         <AreaChart data={chartData}>

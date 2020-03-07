@@ -46,17 +46,15 @@ func (s *Systemtray) onReady() {
 
 	for {
 		now := time.Now()
-		year := now.Year()
-		yearday := now.YearDay()
-		systray.SetTitle("Keys: " + strconv.FormatInt(int64(s.counter.GetKeys(year, yearday)), 10))
-		keysToday.SetTitle("Keys Today: " + strconv.FormatInt(int64(s.counter.GetKeys(year, yearday)), 10))
-		clicksToday.SetTitle("Clicks Today: " + strconv.FormatInt(int64(s.counter.GetClicks(year, yearday)), 10))
+		today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+		tomorrow := today.Add(24 * time.Hour)
+		systray.SetTitle("Keys: " + strconv.FormatInt(int64(s.counter.GetKeys(today, tomorrow)), 10))
+		keysToday.SetTitle("Keys Today: " + strconv.FormatInt(int64(s.counter.GetKeys(today, tomorrow)), 10))
+		clicksToday.SetTitle("Clicks Today: " + strconv.FormatInt(int64(s.counter.GetClicks(today, tomorrow)), 10))
 
-		yesterday := now.Add(-1 * 24 * time.Hour)
-		year = yesterday.Year()
-		yearday = yesterday.YearDay()
-		keysYesterday.SetTitle("Keys Yesterday: " + strconv.FormatInt(int64(s.counter.GetKeys(year, yearday)), 10))
-		clicksYesterday.SetTitle("Clicks Yesterday: " + strconv.FormatInt(int64(s.counter.GetClicks(year, yearday)), 10))
+		yesterday := today.Add(-1 * 24 * time.Hour)
+		keysYesterday.SetTitle("Keys Yesterday: " + strconv.FormatInt(int64(s.counter.GetKeys(yesterday, today)), 10))
+		clicksYesterday.SetTitle("Clicks Yesterday: " + strconv.FormatInt(int64(s.counter.GetClicks(yesterday, today)), 10))
 		time.Sleep(time.Second)
 	}
 }

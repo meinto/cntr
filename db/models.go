@@ -1,6 +1,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/gofrs/uuid"
 	"github.com/jinzhu/gorm"
 )
@@ -13,6 +15,7 @@ type Client struct {
 type Stats struct {
 	gorm.Model
 	ClientUUID uuid.UUID
+	Timeslot   *time.Time
 	Year       int
 	YearDay    int
 	Hour       int
