@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"runtime"
 
 	"github.com/meinto/cntr/counter"
 	"github.com/meinto/cntr/db"
@@ -10,6 +11,7 @@ import (
 )
 
 func main() {
+	runtime.LockOSThread()
 	gormdb, err := db.NewDatabase()
 	if err != nil {
 		log.Fatal(err)
